@@ -1,9 +1,10 @@
 const {promisify} = require('util');
-const { readFile, readdir } = require("fs");
+const { readFile, readdir, writeFile } = require("fs");
 const config = require('./config');
 
 const asyncReadFile = promisify(readFile);
 const asyncReaddir = promisify(readdir);
+const asyncWriteFile = promisify(writeFile);
 
 async function recursivelyGetAllFiles() {
     const allFiles = [];
@@ -26,9 +27,8 @@ async function recursivelyGetAllFiles() {
     return allFiles;
 }
 
-(async function() {
+async function getTypedFiles(files) {
     const typedFiles = [];
-    const files = await recursivelyGetAllFiles();
     for(const file of files) {
         if(/\.ts$/.test(file)) {
             typedFiles.push((file));
@@ -40,5 +40,13 @@ async function recursivelyGetAllFiles() {
             }
         }
     }
-    console.log(typedFiles);
+    return typedFiles;
+}
+
+(async function() {
+    const files = await recursivelyGetAllFiles();
+    const typedFiles = await getTypedFiles(files);
+    const replace = new RegExp(config.path);
+    const stringFiles = typedFiles.reduce((carry, file) => carry += `${file.replace(replace, '')}\n`, '');
+    asyncWriteFile('./result.txt', stringFiles);
 })();
