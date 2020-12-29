@@ -1,0 +1,11 @@
+{
+  "name": "get-component-path",
+  "version": "1.0.0",
+  "description": "",
+  "main": "parser.js",
+  "scripts": {
+    "parse": "node parser.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
